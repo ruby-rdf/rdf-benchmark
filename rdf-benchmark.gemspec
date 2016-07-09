@@ -23,11 +23,11 @@ Gem::Specification.new do |gem|
   gem.requirements               = []
 
   gem.add_runtime_dependency     'rdf',           '~> 2.0'
-  gem.add_runtime_dependency     'benchmark-ips'
+  gem.add_runtime_dependency     'benchmark-ips', '>= 2.6'
 
   gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'rspec',         '~> 3.0'
-  gem.add_development_dependency 'yard',          '~> 0.8'
+  gem.add_development_dependency 'rspec',         '>= 3.0'
+  gem.add_development_dependency 'yard',          '>= 0.8'
 
   gem.post_install_message       = nil
 end
