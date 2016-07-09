@@ -25,6 +25,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency     'rdf',           '~> 2.0'
   gem.add_runtime_dependency     'benchmark-ips'
 
+  gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec',         '~> 3.0'
   gem.add_development_dependency 'yard',          '~> 0.8'
 
