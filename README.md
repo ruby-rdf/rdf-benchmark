@@ -1,7 +1,9 @@
 RDF::Benchmark
 ==============
 
-A benchmark framework for RDF.rb.
+[![Build Status](https://travis-ci.org/ruby-rdf/rdf.png?branch=master)](http://travis-ci.org/ruby-rdf/rdf-benchmark)
+
+A benchmark framework for [RDF.rb](http://ruby-rdf.github.com/rdf).
 
 ## Contributing
 

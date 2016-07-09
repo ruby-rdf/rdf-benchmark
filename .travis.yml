@@ -1,0 +1,12 @@
+language: ruby
+bundler_args: --without debug
+script: "bundle exec rake"
+env:
+  - CI=true
+rvm:
+  - 2.2.4
+  - 2.3.1
+  - jruby-9.0.4.0
+  - rbx
+cache: bundler
+sudo: false
