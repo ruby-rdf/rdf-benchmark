@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 require 'spec_helper'
+require 'rdf/benchmark/repository'
+
 
 describe RDF::Benchmark::Repository do
   subject { described_class.new(generator: generator, repository: repository) }

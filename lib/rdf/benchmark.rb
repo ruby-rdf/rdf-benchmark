@@ -1,16 +1,19 @@
 # frozen_string_literal: true
 require 'rdf'
 require 'benchmark/ips'
-require 'rdf/benchmark/berlin_generator'
 
 module RDF
   module Benchmark
-    autoload :Repository, 'rdf/benchmark/repository'
-
     ##
-    # Benchmarks the block
+    # Benchmarks the given block, measuring iterations per second.
+    #
+    # @param name   [String]
+    # @param time   [Integer]
+    # @param warmup [Integer]
+    # @yield runs the block repeatedly as a Benchmark#ips report
     #
     # @return [Benchmark::IPS::Report]
+    # @see Benchmark#ips
     def self.benchmark_ips!(name: , time: 5, warmup: 2, &block)
       ::Benchmark.ips do |bm|
         bm.config(:time => time, :warmup => warmup)
@@ -19,10 +22,14 @@ module RDF
     end
 
     ##
-    # Benchmarks the block
+    # Benchmarks a single run of the given block (with warmup).
+    #
+    # @param name [String]
+    # @yield runs the block as a Benchmark#bmbm report
     #
     # @return [Benchmark::Report]
-    def self.benchmark!(name:)
+    # @see Benchmark#bmbm
+    def self.benchmark!(name:, &block)
       ::Benchmark.bmbm do |bm|
         bm.report(name, &block)
       end

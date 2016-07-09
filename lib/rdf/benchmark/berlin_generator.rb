@@ -5,26 +5,35 @@ module RDF::Benchmark
   ##
   # @see http://wifo5-03.informatik.uni-mannheim.de/bizer/berlinsparqlbenchmark/spec/BenchmarkRules/index.html#datagenerator
   class BerlinGenerator
-    PATH = './bsbmtools'
+    DEFAULT_FILENAME = 'dataset'.freeze
+    DEFAULT_FACTOR   = 2_000.freeze
+    DEFAULT_FORMAT   = 'nt'.freeze
+    DEFAULT_PATH     = './bsbmtools'.freeze
 
     # @!attribute [rw] filename
     # @!attribute [rw] product_factor
-    attr_accessor :filename, :product_factor, :format
+    # @!attribute [rw] format
+    # @!attribute [rw] tool_path
+    attr_accessor :filename, :product_factor, :format, :tool_path
     
     ##
-    # @param filename [String] (default: 'dataset')
+    # @param filename [String]  (default: 'dataset')
     # @param products [Integer] (default: 2000)
-    # @param format [String] (default: 'nt')
-    def initialize(filename: 'dataset', product_factor: 2000, format: 'nt')
+    # @param format   [String]  (default: 'nt')
+    def initialize(filename:       DEFAULT_FILENAME, 
+                   product_factor: DEFAULT_FACTOR, 
+                   format:         DEFAULT_FORMAT, 
+                   tool_path:      DEFAULT_PATH)
       self.filename       = filename
       self.product_factor = product_factor
       self.format         = format
+      self.tool_path      = tool_path
     end
     
     ##
     # @return [RDF::Reader] a stream of the requested data
     def data(&block)
-      filepath = Pathname.new(PATH) + "#{filename}.#{format}"
+      filepath = Pathname.new(tool_path) + "#{filename}.#{format}"
       generate_data! unless File.exists?(filepath)
       
       RDF::Reader.open(filepath, &block)
@@ -39,12 +48,10 @@ module RDF::Benchmark
     def generate_data!
       start_dir = Dir.pwd
       
-      begin
-        Dir.chdir PATH
-        system "./generate -pc #{product_factor} -fn #{filename}"
-      ensure
-        Dir.chdir start_dir
-      end
+      Dir.chdir tool_path
+      system "./generate -pc #{product_factor} -fn #{filename} -fc"
+    ensure
+      Dir.chdir start_dir
     end
   end
 end

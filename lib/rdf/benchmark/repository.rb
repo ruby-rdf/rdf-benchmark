@@ -6,41 +6,53 @@ module RDF::Benchmark
     attr_accessor :repository
     
     ##
-    # @param generator [#data]
+    # @param generator  [#data]
+    # @param repository [RDF::Repository] the repository to benchmark
     def initialize(generator: , repository:)
       @generator  = generator
       @repository = repository
     end
 
     ##
-    # @return [Enumerable]
+    # @return [RDF::Enumerator]
     def statements
       @generator.data.each_statement
     end
 
     ##
+    # @param name  [#to_s]
+    # @param count [Integer] number of statements to prime for insert
+    #
     # @return [Benchmark::IPS::Report]
-    def insert!
-      sts = statements(1_000_000).to_enum
-
-      report = RDF::Benchmark.benchmark_ips!(name: 'insert') do
-        repository.insert(sts.next)
-      end
-      repository.clear
+    def insert!(name: 'insert', count: 100_000)
+      inserts = statements.lazy.take(count)
       
-      report
+      report = RDF::Benchmark.benchmark_ips!(name: name) do
+        repository.insert(inserts.next)
+      end
+      
+      return report
+    ensure 
+      repository.clear
     end
 
-    def delete!
-      repository.insert(statements)
+    ##
+    # @param name  [#to_s]   the name to give the benchmark report
+    # @param count [Integer] number of statements to prime for delete
+    #
+    # @return [Benchmark::IPS::Report]
+    def delete!(name: 'delete', count: 100_000)
+      deletes = statements.lazy.take(count)
 
-      deletes = statements
-      report = RDF::Benchmark.benchmark_ips!(name: 'insert') do
+      deletes.each { |st| repository.insert(st) }
+
+      report = RDF::Benchmark.benchmark_ips!(name: name) do
         repository.delete(deletes.next)
       end
-      repository.clear
       
-      report
+      return report
+    ensure 
+      repository.clear
     end
   end
 end
