@@ -14,20 +14,65 @@ module RDF::Benchmark
     end
 
     ##
-    # @return [RDF::Enumerator]
-    def statements
-      @generator.data.each_statement
+    # Benchmark {Repository#delete_insert} for individual statements.
+    #
+    # @param name       [#to_s]   the name to give the benchmark report
+    # @param preload    [Integer] number of statements to preload into the 
+    #   repository for delete
+    # @param options    [Hash<Symbol, Object>]
+    #   @see RDF::Benchmark#benchmark_ips
+    #
+    # @return [Benchmark::IPS::Report] the report for the finished benchmark
+    def delete_insert!(name:    'Repository#delete_insert', 
+                       preload: 1_000_000, **options)
+      inserts = statements.lazy
+      deletes = inserts.take(preload)
+      deletes.each { |st| repository.insert(st) }
+
+      report = RDF::Benchmark.benchmark_ips!(name: name, **options) do
+        repository.delete_insert(deletes.take(10), inserts.take(10))
+      end
+
+      return report
+    ensure 
+      repository.clear
     end
 
     ##
-    # @param name  [#to_s]
-    # @param count [Integer] number of statements to prime for insert
+    # Benchmark {Repository#delete} for individual statements.
     #
-    # @return [Benchmark::IPS::Report]
-    def insert!(name: 'insert', count: 100_000)
-      inserts = statements.lazy.take(count)
+    # @param name    [#to_s]   the name to give the benchmark report
+    # @param preload [Integer] number of statements to preload into the 
+    #   repository for delete
+    # @param options [Hash<Symbol, Object>]
+    #   @see RDF::Benchmark#benchmark_ips
+    #
+    # @return [Benchmark::IPS::Report] the report for the finished benchmark
+    def delete!(name: 'Repository#delete', preload: 1_000_000, **options)
+      deletes = statements.lazy.take(preload)
+      deletes.each { |st| repository.insert(st) }
       
-      report = RDF::Benchmark.benchmark_ips!(name: name) do
+      report = RDF::Benchmark.benchmark_ips!(name: name, **options) do
+        repository.delete(deletes.next)
+      end
+      
+      return report
+    ensure 
+      repository.clear
+    end
+
+    ##
+    # Benchmark {Repository#insert} for individual statements.
+    #
+    # @param name    [#to_s]
+    # @param options [Hash<Symbol, Object>]
+    #   @see RDF::Benchmark#benchmark_ips
+    #
+    # @return [Benchmark::IPS::Report] the report for the finished benchmark
+    def insert!(name: 'Repository#insert', **options)
+      inserts = statements.lazy
+
+      report = RDF::Benchmark.benchmark_ips!(name: name, **options) do
         repository.insert(inserts.next)
       end
       
@@ -37,22 +82,9 @@ module RDF::Benchmark
     end
 
     ##
-    # @param name  [#to_s]   the name to give the benchmark report
-    # @param count [Integer] number of statements to prime for delete
-    #
-    # @return [Benchmark::IPS::Report]
-    def delete!(name: 'delete', count: 100_000)
-      deletes = statements.lazy.take(count)
-
-      deletes.each { |st| repository.insert(st) }
-
-      report = RDF::Benchmark.benchmark_ips!(name: name) do
-        repository.delete(deletes.next)
-      end
-      
-      return report
-    ensure 
-      repository.clear
+    # @return [RDF::Enumerator]
+    def statements
+      @generator.data.each_statement
     end
   end
 end
