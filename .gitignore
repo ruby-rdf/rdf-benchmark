@@ -4,3 +4,4 @@ bsbmtools/**/*
 *#
 *~
 *.gem
+tmp/
