@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
 
   gem.name               = 'rdf-benchmark'
   gem.homepage           = 'http://ruby-rdf.github.com/rdf-benchmark'
-  gem.license            = 'Public Domain' if gem.respond_to?(:license=)
+  gem.license            = 'Unlicense' if gem.respond_to?(:license=)
   gem.summary            = 'Dataset Generation & Benchmarks for RDF.rb'
   gem.description        = 'Dataset Generation & Benchmarks for RDF.rb'
 
@@ -23,11 +23,11 @@ Gem::Specification.new do |gem|
   gem.requirements               = []
 
   gem.add_runtime_dependency     'rdf',           '~> 2.0'
-  gem.add_runtime_dependency     'benchmark-ips', '>= 2.6'
+  gem.add_runtime_dependency     'benchmark-ips', '~> 2'
 
-  gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'rspec',         '>= 3.0'
-  gem.add_development_dependency 'yard',          '>= 0.8'
+  gem.add_development_dependency 'rake',          '~> 0'
+  gem.add_development_dependency 'rspec',         '~> 3.0'
+  gem.add_development_dependency 'yard',          '~> 0.9'
 
   gem.post_install_message       = nil
 end
