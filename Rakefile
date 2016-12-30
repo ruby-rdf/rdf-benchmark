@@ -2,6 +2,8 @@ require 'rake/clean'
 require 'bundler'
 require 'rspec/core/rake_task'
 
+load 'lib/tasks/berlin.rake'
+
 Bundler::GemHelper.install_tasks
 
 CLEAN.include %w(bsbmtools)
